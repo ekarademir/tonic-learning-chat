@@ -1,0 +1,53 @@
+syntax = "proto3";
+
+package chat;
+
+service Chat {
+    // A client will send a Join rpc to receive an access token.
+    // Admittance will have access token only if the user is registered.
+    rpc Join(Member) returns (Admittance) {}
+
+    // Retrieves the chatlog with given timespan
+    rpc ChatLog(TimeSpan) returns (stream ChatMessage) {}
+
+    // Commits a chat message to the log
+    rpc Commit(NewChatMessage) returns (CommitAck) {}
+}
+
+// A log commit acknowledgement
+message CommitAck {
+    uint64 time = 1;
+}
+
+// A member is anyone who is registered or unregistered.
+// If a mamber is registered then they will be allowed in.
+
+message Member {
+    string username = 1;
+    string password = 2;
+}
+
+// An admittance has a token if the user has been registered.
+message Admittance {
+    string token = 1;
+}
+
+
+// A time span covering between start and end indices
+message TimeSpan {
+    uint64 start = 1;
+    int64 end = 2;
+    string access_token = 3;
+}
+
+// An entry in the chat log
+message ChatMessage {
+    uint64 time = 1;
+    string username = 2;
+    string value = 3;
+}
+
+message NewChatMessage {
+    string access_token = 1;
+    string value = 2;
+}
